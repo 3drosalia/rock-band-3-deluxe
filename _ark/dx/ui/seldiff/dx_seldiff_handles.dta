@@ -676,9 +676,12 @@
             }
          )
          (song
-            {{sprint "line" $line ".lbl"} set_song_and_artist_name_from_sym $random_song 0}
-            {{sprint "line" $line ".lbl"} set alt_font_resource_name pentatonic_outline}
-            {{sprint "line" $line ".lbl"} set alt_italics 0.1}
+            {if_else $random_song
+               {{sprint "line" {int $line} ".lbl"} set_song_and_artist_name_from_sym {symbol $random_song} 0}
+               {{sprint "line" {int $line} ".lbl"} set_text {sprint "error"}}
+            }
+            {{sprint "line" {int $line} ".lbl"} set alt_font_resource_name pentatonic_outline}
+            {{sprint "line" {int $line} ".lbl"} set alt_italics 0.1}
          )
          (tempo
             {set $dx_play_a_show_line
@@ -730,9 +733,12 @@
             {set $dx_play_a_show_line {localize play_a_show_refresh}}
          )
       }
-      {if_else {== $lineeval song}
-         {{dx_play_a_show_panel find {sprint "line" $line ".lbl"}} set_song_and_artist_name_from_sym $random_song 0}
-         {{dx_play_a_show_panel find {sprint "line" $line ".lbl"}} set_token_fmt {sprint $dx_play_a_show_line}}
+      {do
+         ($line_label {dx_play_a_show_panel find {sprint "line" $line ".lbl"}})
+         {if_else {== $lineval song}
+            {$line_label set_song_and_artist_name_from_sym $random_song 0}
+            {$line_label set_token_fmt {sprint $dx_play_a_show_line}}
+         }
       }
       ;{if {session_mgr is_leader_local}
       ;   {if_else {== $lineeval song}
@@ -787,7 +793,9 @@
       {$this set_line $line4eval 4}
       {$this set_line $line5eval 5}
       {$this set_line $line6eval 6}
+      #ifndef HX_WII
       {$this print_song_option_data}
+      #endif
       {$this dx_update_set_count}
       {$this format_vote vote}
       {$this handle_album_art}
@@ -844,8 +852,8 @@
          {set $playintrotext FALSE}
          {play_header.lbl set text_token {sprint " "}}
       }
-      {overshell begin_override_flow kOverrideFlow_None}
-      {overshell begin_override_flow kOverrideFlow_SongSettings}
+      ;{overshell begin_override_flow kOverrideFlow_None}
+      ;{overshell begin_override_flow kOverrideFlow_SongSettings}
    )
    (calc_highest_vote
       {set $vote_check_array ()}
@@ -985,7 +993,7 @@
       {switch $type
          (vote
             {foreach $line $lines
-               {{dx_play_a_show_panel find {sprint "inst" $line ".lbl"}} set text_token 
+               {{dx_play_a_show_panel find {sprint "inst" {int $line} ".lbl"}} set text_token 
                   {sprint
                      {if_else {&& $slot1_voted {== $slot1_vote $line}} {sprint "<alt>" $slot1_voted_icon "</alt>"} {sprint ""}}
                      {if_else {&& $slot2_voted {== $slot2_vote $line}} {sprint "<alt>" $slot2_voted_icon "</alt>"} {sprint ""}}
@@ -998,7 +1006,7 @@
          )
          (band
             {foreach $line $lines
-               {{dx_play_a_show_panel find {sprint "inst" $line ".lbl"}} set text_token
+               {{dx_play_a_show_panel find {sprint "inst" {int $line} ".lbl"}} set text_token
                   {sprint
                      {if_else {== $dx_play_a_show_vote $line}
                         {sprint "<alt>j</alt>"}
@@ -1008,7 +1016,7 @@
                         {sprint "  "}
                         {sprint ""}
                      }
-                     $line
+                     {int $line}
                      {if_else {== $line 1}
                         {sprint " . "}
                         {sprint ". "}

@@ -457,14 +457,23 @@
                {delete author_finder}
             }
          }
-         {if {&& {! {song.lst is_scrolling}} {== {{music_library get_highlighted_node} get_node_type} kNodeSong} $probeforfinder}
-            {if {|| {file_exists {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}} "/../../gen/songs.dtb"}} {song_mgr is_song_mounted {{music_library get_highlighted_node} get_token}}}
-               {set $probeforfinder FALSE}
-               {if {exists author_thread} {delete author_thread}}
-               {thread_task kTaskSeconds
-                  (name author_thread)
-                  (script {$this dx_authorfinder})
+         {if
+            {&&
+               {! {song.lst is_scrolling}}
+               {== {{music_library get_highlighted_node} get_node_type} kNodeSong}
+               $probeforfinder
+               {!= {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}}} "party_setlist"}
+               {!= {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}}} "random_song"}
+               {||
+                  {file_exists {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}} "/../../gen/songs.dtb"}}
+                  {song_mgr is_song_mounted {{music_library get_highlighted_node} get_token}}
                }
+            }
+            {set $probeforfinder FALSE}
+            {if {exists author_thread} {delete author_thread}}
+            {thread_task kTaskSeconds
+               (name author_thread)
+               (script {$this dx_authorfinder})
             }
          }
       }
@@ -479,35 +488,55 @@
             {delete author_finder}
          }
       }
-      {if {&& {! {song.lst is_scrolling}} {== {{music_library get_highlighted_node} get_node_type} kNodeSong} $probeforfinder}
-         {if {|| {file_exists {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}} "/../../gen/songs.dtb"}} {song_mgr is_song_mounted {{music_library get_highlighted_node} get_token}}}
-            {set $probeforfinder FALSE}
-            {if {exists author_thread} {delete author_thread}}
-            {thread_task kTaskSeconds
-               (name author_thread)
-               (script {$this dx_authorfinder})
+      {if
+         {&&
+            {! {song.lst is_scrolling}}
+            {== {{music_library get_highlighted_node} get_node_type} kNodeSong}
+            $probeforfinder
+            {!= {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}}} "party_setlist"}
+            {!= {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}}} "random_song"}
+            {||
+               {file_exists {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}} "/../../gen/songs.dtb"}}
+               {song_mgr is_song_mounted {{music_library get_highlighted_node} get_token}}
             }
+         }
+         {set $probeforfinder FALSE}
+         {if {exists author_thread} {delete author_thread}}
+         {thread_task kTaskSeconds
+            (name author_thread)
+            (script {$this dx_authorfinder})
          }
       }
    )
    (dx_authorpoll
       ($shortname)
-      {thread_task kTaskSeconds
-         (script
-            {dx_author_finder_var_reset}
-            {meta_performer set_song {{music_library get_highlighted_node} get_token}}
-            {set $dx_song_data_processed FALSE}
-            {if_else $dx_song_mounted
-               {preload_panel dx_load_tip_and_author_finder}
-               {$task loop}
-            }
-         )
+      {if
+         {&&
+            {! {song.lst is_scrolling}}
+            {== {{music_library get_highlighted_node} get_node_type} kNodeSong}
+            $probeforfinder
+            {!= {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}}} "party_setlist"}
+            {!= {sprint {song_mgr song_path {{music_library get_highlighted_node} get_token}}} "random_song"}
+            {!= {sprint $shortname} "party_setlist"}
+            {!= {sprint $shortname} "random_song"}
+         }
+         {thread_task kTaskSeconds
+            (script
+               {dx_author_finder_var_reset}
+               {meta_performer set_song {{music_library get_highlighted_node} get_token}}
+               {set $dx_song_data_processed FALSE}
+               {if_else $dx_song_mounted
+                  {preload_panel dx_load_tip_and_author_finder}
+                  {$task loop}
+               }
+            )
+         }
       }
    )
    (dx_authorfinder
       {set $dx_song_data_processed FALSE}
       {set $dx_path_failed FALSE}
-      {if_else {&& {! $dx_path_failed} $dx_author_finder_is_enabled {! {gamemode in_mode trainer}}}
+      {if_else {&& {== {{music_library get_highlighted_node} get_node_type} kNodeSong} {! $dx_path_failed} $dx_author_finder_is_enabled {! {gamemode in_mode trainer}}}
          {do
             {if {exists author_finder}
                {delete author_finder}
