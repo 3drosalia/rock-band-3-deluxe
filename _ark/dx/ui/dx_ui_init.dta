@@ -1,3 +1,6 @@
+{set $dx_song_update_hash_old "nothing"}
+#include ../dx_song_update_hash.dta
+
 #ifndef HX_WII {if {file_exists DX_EVENT_FILE_PATH} {dx_event_dta_reader}} #endif
 
 {unless $dx_only_populate_once_holders
@@ -6,6 +9,13 @@
    {set $dx_mtv_holder {array ()}}
    {set $dx_state_tracker {array ()}}
 }
+{set $dx_button_list (kPad_L2 kPad_R2 kPad_L1 kPad_R1 kPad_Tri kPad_Circle kPad_X kPad_Square kPad_Select kPad_L3 kPad_R3 kPad_Start kPad_DUp kPad_DRight kPad_DDown kPad_DLeft)}
+#ifdef HX_WII
+{set $dx_window_offset 83.41675008341676}  ; ngc input offset
+#else
+{set $dx_window_offset 16.683350016683352}  ; xenon & ps3 input offset
+#endif
+; that is a neversoft reference btw
 
 #ifndef HX_WII
 ;needs font on wii
@@ -15,6 +25,7 @@
 {set $dx_high_score_report TRUE}
 {set $highscore_tracker ()}
 {resize $highscore_tracker 0}
+{set $last_tracked_state dxState_enter}
 #ifdef _SHIP
 DX_LOG_CLEAR
 DX_JSON_CLEAR
@@ -56,10 +67,18 @@ DX_CURRENT_SONG_CLEAR
       {set $dx_sv8_dx_vers TRUE}
       {set $dx_forced_main_menu_bg ("sv8_a")}
    }
-   {set $dx_forced_main_menu_bg FALSE}
+   {set $dx_forced_main_menu_bg ()}
 }
-{set $dx_forced_song_select_bg FALSE}
+{set $default_main_menu_bg TRUE}
+{set $black_main_menu_bg FALSE}
 
+{set $dx_forced_song_select_bg ()}
+{set $default_song_select_bg TRUE}
+{set $black_song_select_bg FALSE}
+
+{set $dx_forced_practice_bg ()}
+{set $default_practice_bg TRUE}
+{set $black_practice_bg FALSE}
 ;{if_else $dx_event_mode
 ;   {set $dx_confirm_song_count FALSE}
 ;   {set $dx_confirm_song_count TRUE}
@@ -144,7 +163,9 @@ DX_CURRENT_SONG_CLEAR
 {foreach_int $i 0 3
    {set_var {sprint "dx_perfects_count_" $i} 0}
 }
-
+{set $dx_list_pos 0}
+{set $dx_list_item_selected FALSE}
+{set $dx_pos_remapper_array_number 3}
 {set $dx_track_username TRUE}
 {set $dx_track_username_size 2}
 {set $dx_track_username_font pentatonic_outline}
@@ -364,7 +385,9 @@ DX_CURRENT_SONG_CLEAR
    {set $dx_vsync FALSE}
    {set $dx_vsync TRUE}
 }
-
+{if {== $dx_detected_platform platform_rpcs3}
+   {set $dx_ultra_shadows TRUE}
+}
 ;#ifndef HX_WII
 ;author finder setup
 ;{unless $dx_ps3hw
@@ -475,6 +498,9 @@ DX_CURRENT_SONG_CLEAR
 ;sets default gem track textures.
 {set $dx_gem none}
 
+;set default gem model theme
+{set $dx_current_gem_model_theme default}
+
 ;sets default sustain track textures.
 {set $dx_sustain rb3}
 
@@ -564,6 +590,15 @@ DX_CURRENT_SONG_CLEAR
 {set $remote_trackspeed_real_keys FALSE}
 {set $remote_trackspeed_real_guitar FALSE}
 {set $remote_trackspeed_real_bass FALSE}
+
+;same but for track length
+{set $tracklength_guitar 1.0}
+{set $tracklength_bass 1.0}
+{set $tracklength_drum 1.0}
+{set $tracklength_keys 1.0}
+{set $tracklength_real_keys 1.0}
+{set $tracklength_real_guitar 1.0}
+{set $tracklength_real_bass 1.0}
 
 {set $dx_dim_remote_players TRUE}
 
@@ -687,16 +722,21 @@ DX_CURRENT_SONG_CLEAR
 {set $dx_gamemode init}
 
 ;in game hud
+{set $dx_lyric_display_enabled TRUE}
 {set $dx_crowd_meter_state dx_on}
 {set $dx_score_meter_visibility TRUE}
 {set $dx_fail_flash TRUE}
+
+{set $dx_lyric_highlight_r 0.0}
+{set $dx_lyric_highlight_g 0.98}
+{set $dx_lyric_highlight_b 0.69}
 
 
 ;currentsong formatting defauts
 {set $dx_mtv_visibility always}
 {set $dx_mtv_line_song_title TRUE}
 {set $dx_mtv_line_artist TRUE}
-{set $dx_mtv_line_year FALSE}
+{set $dx_mtv_year TRUE}
 ;{set $dx_year_on_one_mtv_line TRUE}
 {set $dx_mtv_line_album FALSE}
 {set $dx_mtv_line_genre FALSE}
@@ -718,7 +758,8 @@ DX_CURRENT_SONG_CLEAR
 {set $dx_joypad_pad_remap_3 kPad_R2}
 {set $dx_joypad_pad_remap_4 kPad_X}
 {set $dx_joypad_pad_remap_5 kPad_Select}
-
+{set $default_transitions TRUE}
+{set $black_song_transition FALSE}
 ;mtv overlay position for event mode
 ;{if $dx_event_mode
 ;   {set $mtvpos_0 -85}
@@ -728,6 +769,7 @@ DX_CURRENT_SONG_CLEAR
 ;game hud default ui positioning
 {set $scoreboardpos_0 8} {set $scoreboardpos_1 0} {set $scoreboardpos_2 -16}
 {set $star_displaypos_0 0} {set $star_displaypos_1 0} {set $star_displaypos_2 0}
+{set $dx_score_base_0 0} {set $dx_score_base_1 0} {set $dx_score_base_2 0}
 
 ;practice mode default ui positioning
 {set $speed_controlpos_0 46} {set $speed_controlpos_1 0} {set $speed_controlpos_2 -5}
@@ -765,6 +807,7 @@ DX_CURRENT_SONG_CLEAR
       {set $dx_splash_screen TRUE}
    }
 }
+{set $dx_anim_genres FALSE}
 {set $dx_seasonal_logos TRUE}
 {set $dx_season standard}
 {set $dx_additional_parts TRUE}
@@ -803,6 +846,7 @@ DX_CURRENT_SONG_CLEAR
 {if $dx_event_mode
    {modifier_mgr toggle_modifier_enabled mod_nopause}
 }
+{set $dx_command_ran 0}
 {set $dx_admin_mode FALSE}
 
 {set $dx_instrument_icons rb3}
@@ -897,6 +941,11 @@ DX_CURRENT_SONG_CLEAR
 }
 #endif
 
+; don't show cache warning on first time
+{if {== $dx_song_update_hash_old "nothing"}
+   {set $dx_song_update_hash_old $dx_song_update_hash}
+}
+
 ;for overshell reasons
 {if_else {>= $emulatefps 35}
    {set $dx_60fps TRUE}
@@ -907,15 +956,27 @@ DX_CURRENT_SONG_CLEAR
 ;{if $dx_ps3hw
 ;   {set $dx_author_finder_is_enabled FALSE}
 ;}
-;{set $dx_forced_outro_vignette ()}
-;{resize $dx_forced_outro_vignette 0}
+{set $dx_forced_outro_vignette ()}
+{resize $dx_forced_outro_vignette 0}
 
-;{if $dx_forced_main_menu_bg
-;   {set_elem {find $syscfg vignettes backdrops sv3} 1 $dx_forced_main_menu_bg}
-;}
-;{if $dx_forced_song_select_bg
-;   {set_elem {find $syscfg vignettes backdrops sv4} 1 $dx_forced_song_select_bg}
-;}
+{if {&& {! $black_main_menu_bg} {! $default_main_menu_bg}}
+   {set_elem {find $syscfg vignettes backdrops sv3} 1 {eval $dx_forced_main_menu_bg}}
+}
+{if {&& {! $black_song_select_bg} {! $default_song_select_bg}}
+   {set_elem {find $syscfg vignettes backdrops sv4} 1 {eval $dx_forced_song_select_bg}}
+}
+
+{if $black_song_select_bg
+   {set_elem {find $syscfg vignettes backdrops sv4} 1 {quote ()}}
+}
+
+{if {&& {! $black_practice_bg} {! $default_practice_bg}}
+   {set_elem {find $syscfg vignettes backdrops sv5} 1 {eval $dx_forced_practice_bg}}
+}
+
+{if $black_practice_bg
+   {set_elem {find $syscfg vignettes backdrops sv5} 1 {quote ()}}
+}
 
 {switch $dx_fctype
    (ring {set $dx_fc_ring TRUE} {set $dx_fc_glow FALSE})
@@ -940,8 +1001,6 @@ DX_CURRENT_SONG_CLEAR
       {set $force FALSE}
    }
 }
-
-{set $dx_in_calibration FALSE}
 
 {set $dx_no_message_sound FALSE}
 {set $dx_menu_message ""}
@@ -994,6 +1053,20 @@ DX_CURRENT_SONG_CLEAR
 {set $dx_local_vocal_arrow $dx_vocal_arrow} {set $dx_local_vocal_highway $dx_vocal_highway} {set $dx_local_vocal_notes $dx_vocal_notes} {set $dx_local_vocal_overdrive $dx_vocal_overdrive}
 
 {set $dx_last_song_has_tonic FALSE}
+
+
+;fix improper transition sets
+{if {== {size $dx_forced_outro_vignette} 0}
+   {if $black_song_transition {set $default_transitions FALSE}}
+   {if $default_transitions {set $black_song_transition FALSE}}
+   {if {&& {! $default_transitions} {! $black_song_transition}}
+      {set $default_transitions TRUE}
+   }
+}
+{if {> {size $dx_forced_outro_vignette} 0}
+   {set $default_transitions FALSE}
+   {set $black_song_transition FALSE}
+}
 
 
 ;force a venue name. found in macros.dta.

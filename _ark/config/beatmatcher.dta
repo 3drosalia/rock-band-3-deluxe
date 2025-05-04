@@ -17,6 +17,8 @@
             (script
                {dx_new_set_song_progress $dx_song_progress_bar}
                {dx_fix_new_song_progress_pos}
+               {dx_set_scoreboard_pos}
+               {dx_set_star_display_pos}
             )
          }
       }
@@ -85,7 +87,7 @@
       {unless {gamemode in_mode trainer}
          {thread_task kTaskBeats
             (script
-               {dx_blink_gold_star_on}
+               {dx_update_gold_flash}
             )
          }
       }
@@ -102,18 +104,46 @@
             (game beat)}}
       #endif)
    (downbeat
-      {unless {gamemode in_mode trainer}
-         {thread_task kTaskBeats
-            (script
-               {dx_blink_gold_star_off}
-            )
-         }
-      }
+      ; {unless {gamemode in_mode trainer}
+      ;    {thread_task kTaskBeats
+      ;       (script
+      ;          {dx_blink_gold_star_off}
+      ;       )
+      ;    }
+      ; }
       {unless
          $stagekit
          {handle
             (game downbeat)}})
    (reset))
+#define DX_ROLL_INTERVAL_COMMON
+(
+   {get_lane_interval 0 FALSE}
+   {get_lane_interval 0 FALSE}
+   {get_lane_interval 165 FALSE}
+   {get_lane_interval 165 FALSE}
+)
+#define DX_ROLL_INTERVAL_COMMON_PRO
+(
+   {get_lane_interval 0 TRUE}
+   {get_lane_interval 0 TRUE}
+   {get_lane_interval 165 TRUE}
+   {get_lane_interval 165 TRUE}
+)
+#define DX_TRILL_INTERVAL_COMMON
+(
+   {get_trill_interval 0 FALSE}
+   {get_trill_interval 0 FALSE}
+   {get_trill_interval 160 FALSE}
+   {get_trill_interval 160 FALSE}
+)
+#define DX_TRILL_INTERVAL_COMMON_PRO
+(
+   {get_trill_interval 0 TRUE}
+   {get_trill_interval 0 TRUE}
+   {get_trill_interval 160 TRUE}
+   {get_trill_interval 160 TRUE}
+)
 (watcher
    (slop
       {if_else {modifier_mgr is_modifier_active mod_precision}
@@ -150,8 +180,8 @@
    (pitch_bend_range 1)
    (ms_to_full_pitch_bend 1000)
    (cymbal_autoplay_ms 0)
-   (trill_interval_ms
-      (DX_ROLL_INTERVAL_COMMON))
+   (trill_interval_ms 
+         (DX_TRILL_INTERVAL_COMMON_PRO))
    (keyboard_miss_window_ms 200)
    (real_guitar_miss_window_ms 200)
    (keyboard_fat_finger_window_ms 100)
@@ -161,22 +191,10 @@
             (DX_ROLL_INTERVAL_COMMON))
          (double_lane
             (
-               {if_else {modifier_mgr is_modifier_active mod_nolanes}
-                  -100
-                  0
-               }
-               {if_else {modifier_mgr is_modifier_active mod_nolanes}
-                  -100
-                  0
-               }
-               {if_else {modifier_mgr is_modifier_active mod_nolanes}
-                  -100
-                  255
-               }
-               {if_else {modifier_mgr is_modifier_active mod_nolanes}
-                  -100
-                  255
-               }
+               {get_lane_interval 0 FALSE}
+               {get_lane_interval 0 FALSE}
+               {get_lane_interval 255 FALSE}
+               {get_lane_interval 255 FALSE}
             )
          )
       )
@@ -185,15 +203,15 @@
       (bass
          (DX_ROLL_INTERVAL_COMMON))
       (real_guitar
-         (DX_ROLL_INTERVAL_COMMON))
+         (DX_ROLL_INTERVAL_COMMON_PRO))
       (real_guitar_22
-         (DX_ROLL_INTERVAL_COMMON))
+         (DX_ROLL_INTERVAL_COMMON_PRO))
       (real_bass
-         (DX_ROLL_INTERVAL_COMMON))
+         (DX_ROLL_INTERVAL_COMMON_PRO))
       (real_bass_22
-         (DX_ROLL_INTERVAL_COMMON))
+         (DX_ROLL_INTERVAL_COMMON_PRO))
       (real_keys
-         (DX_ROLL_INTERVAL_COMMON))))
+         (DX_ROLL_INTERVAL_COMMON_PRO))))
 (parser
    (drum_style_instruments
       (kAudioDrums))

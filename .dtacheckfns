@@ -177,7 +177,7 @@ dx_song_progress_label 2 2
 dx_song_select_endurance 0 0
 dx_song_select_enter 0 0
 dx_special_char_sanitize 0 0
-dx_state_pos_tracker 0 0
+dx_state_pos_tracker 2 2
 dx_state_setup 2 2
 dx_store_meta_info 4 4
 dx_store_note_hit_info 6 6
@@ -242,7 +242,7 @@ new_shell_vignette 1 1
 new_transition_vignette 1 1
 next_character_driver 0 0
 overshell_list_chooser 0 0
-overshell_list_creation 0 0
+overshell_list_creation 1 1
 overshell_view_chooser 0 0
 participating_vocalist_exists 0 0
 play_common_seq 1 1

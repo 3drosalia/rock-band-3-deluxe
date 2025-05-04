@@ -101,6 +101,11 @@
    (supported_events
       (start p0_hit p1_hit p2_hit p3_hit cam_cut excitement_boot excitement_bad excitement_okay excitement_great excitement_peak intro_start intro_end kick_drum snare_drum crash_hit post_switch_cam music_start game_lost game_won game_won_finale bre_success bonusfx spotlight_bass_on spotlight_bass_off spotlight_drums_on spotlight_drums_off spotlight_guitar_on spotlight_guitar_off spotlight_keyboard_on spotlight_keyboard_off spotlight_vocal_on spotlight_vocal_off lighting_intro lighting_win lighting_lose lighting_verse lighting_chorus lighting_blackout_fast lighting_blackout_slow lighting_blackout_spot lighting_dischord lighting_flare_fast lighting_flare_slow lighting_frenzy lighting_harmony lighting_manual_cool lighting_manual_warm lighting_searchlights lighting_silhouettes lighting_stomp lighting_strobe_fast lighting_strobe_slow lighting_sweep lighting_loop_cool lighting_loop_warm lighting_win_bre lighting_bre vignette_start vignette_end vignette_seq_start vignette_seq_end))
    (types
+      (dx_kick_trigger
+         (trigger
+            {dx_kick_callback}
+         )
+      )
       (toggler
          (editor
             (disable
@@ -1590,6 +1595,7 @@
                      {dx_camera_shake_setter $this}
                      {dx_camera_blur_setter $this}
                      {dx_force_lod_setter $this}
+                     {dx_ultra_shadows $dx_ultra_shadows}
                   }}
                {do
                   {if
@@ -1598,7 +1604,15 @@
                         set
                         showing
                         FALSE}}}}
-            {if {|| $dx_customizer $dx_black_menu} ; dx - hide background vignettes for menu speedups or for black venue ;{&& {game is_up} {== $dx_venue none}}
+                        {set $default_song_select_bg TRUE}
+{set $black_song_select_bg FALSE}
+            {if
+               {||
+                  $dx_customizer
+                  {&& {== {ui current_screen} song_select_screen} $black_song_select_bg}
+                  {&& {== {ui current_screen} {gamemode get main_screen}} $black_main_menu_bg}
+                  {&& {== {ui current_screen} practice_screen} $black_practice_bg}
+               } ; dx - hide background vignettes for menu speedups or for black venue ;{&& {game is_up} {== $dx_venue none}}
                {if [scene0]
                   {[scene0] set showing FALSE}
                }
@@ -2080,12 +2094,14 @@
                      " scene could not find camshot!\n"}}}
                   {unless {session is_in_game}
                      ;remove post fx when entering a shot not in game
+
                      {dx_noise_setter $this}
                      {dx_emulatefps_setter $this}
                      {dx_motion_blur_setter $this}
                      {dx_camera_shake_setter $this}
                      {dx_camera_blur_setter $this}
                      {dx_force_lod_setter $this}
+                     {dx_ultra_shadows $dx_ultra_shadows}
                   })
          (enter
             {unless
@@ -2111,6 +2127,7 @@
                         {dx_camera_shake_setter $this}
                         {dx_camera_blur_setter $this}
                         {dx_force_lod_setter $this}
+                        {dx_ultra_shadows $dx_ultra_shadows}
                      }
                   }
                   {handle
@@ -3681,6 +3698,9 @@
                   {dx_camera_shake_setter $world}
                   {dx_camera_blur_setter $world}
                   {dx_force_lod_setter $world}
+                  {dx_ultra_shadows $dx_ultra_shadows}
+                  {dx_air_guitar {modifier_mgr is_modifier_active mod_air_guitar}}
+                  {dx_char_hider TRUE}
                   {set $dx_apply_postproc FALSE}
                }
             }
@@ -4035,7 +4055,9 @@
                      {$crowd
                         set
                         lod
-                        [crowd_lod]}}}})
+                        [crowd_lod]}}}}
+            {dx_ultra_shadows $dx_ultra_shadows}
+         )
          (stop_shot
             {if
                [stop_movie]
@@ -4238,7 +4260,9 @@
                   select}}
             #ifndef _SHIP
             {$this update_overlay}
-            #endif)
+            #endif
+            {dx_ultra_shadows $dx_ultra_shadows}
+         )
          (stop_shot
             {if
                [postprocess]
@@ -4278,6 +4302,7 @@
                {dx_camera_shake_setter $world}
                {dx_camera_blur_setter $world}
                {dx_force_lod_setter $world}
+               {dx_ultra_shadows $dx_ultra_shadows}
                {$world
                   add_sink
                   $this

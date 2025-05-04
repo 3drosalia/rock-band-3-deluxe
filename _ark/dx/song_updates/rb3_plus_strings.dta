@@ -1050,22 +1050,6 @@
    (real_guitar_tuning (0 0 0 0 0 0))
    (real_bass_tuning (0 0 0 0))
    (strings_author "RK")
-)(ourtruth
-   (upgrade_version 1) 
-   (rank
-      (drum 326)
-      (guitar 185)
-      (bass 374)
-      (vocals 365)
-      (keys 0)
-      (real_keys 0)
-      (band 355)
-      (real_guitar 222)
-      (real_bass 282)
-   )
-   (real_guitar_tuning (0 0 0 0 0 0))
-   (real_bass_tuning (0 0 0 0))
-   (strings_author "RK")
 )(painkiller
    (upgrade_version 1) 
    (rank
@@ -1236,22 +1220,6 @@
       (band 189)
       (real_guitar 306)
       (real_bass 106)
-   )
-   (real_guitar_tuning (0 0 0 0 0 0))
-   (real_bass_tuning (0 0 0 0))
-   (strings_author "RK")
-)(supremegirl
-   (upgrade_version 1)
-   (rank
-      (drum 322)
-      (guitar 300)
-      (bass 274)
-      (vocals 258)
-      (keys 0)
-      (real_keys 0)
-      (band 345)
-      (real_guitar 405)
-      (real_bass 448)
    )
    (real_guitar_tuning (0 0 0 0 0 0))
    (real_bass_tuning (0 0 0 0))
@@ -1719,6 +1687,22 @@
    (real_guitar_tuning (-2 0 0 0 0 0))
    (real_bass_tuning (-2 0 0 0))
    (strings_author "Ziggy")
+)(dancedance
+   (upgrade_version 1)
+   (rank
+      (drum 288)
+      (guitar 267)
+      (bass 289)
+      (vocals 279)
+      (keys 123)
+      (real_guitar 331)
+      (real_bass 267)
+      (real_keys 131)
+      (band 251)
+   )
+   (real_guitar_tuning (0 0 0 0 0 0))
+   (real_bass_tuning (0 0 0 0))
+   (strings_author "WarGod, Carl Mylo")
 )(darlingdear
    (upgrade_version 1) 
    (rank
@@ -2276,6 +2260,22 @@
    (real_guitar_tuning (0 0 0 0 0 0))
    (real_bass_tuning (0 0 0 0))
    (strings_author "RK")
+)(sanctified
+   (upgrade_version 1) 
+   (rank
+      (drum 309)
+      (guitar 179)
+      (bass 120)
+      (vocals 191)
+      (keys 160)
+      (real_guitar 227)
+      (real_bass 307)
+      (real_keys 227)
+      (band 205)
+   )
+   (real_guitar_tuning (0 0 0 0 0 0))
+   (real_bass_tuning (0 0 0 0))
+   (strings_author "Carl Mylo, RK")
 )(school
    (upgrade_version 1)
    (rank
