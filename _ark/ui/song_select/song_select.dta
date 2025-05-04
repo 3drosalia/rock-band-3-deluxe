@@ -1132,6 +1132,7 @@
       #endif
       {if $dx_prep_show_flow
          {music_library.lbl set text_token dx_play_a_show}
+         {overshell add_sink $this}
       }
       {$this refresh_selected_song}
    )
@@ -1812,7 +1813,10 @@
                   {set $dx_in_show_flow FALSE}
                   {set $dx_prep_show_flow FALSE}
                   {set $dx_playing_a_show FALSE}
-                  {overshell end_override_flow kOverrideFlow_SongSettings TRUE}
+                  {overshell remove_sink $this}
+                  {if {overshell in_override_flow kOverrideFlow_SongSettings}
+                     {overshell end_override_flow kOverrideFlow_SongSettings TRUE}
+                  }
                   {ui sync_screen meta_loading_main_screen 0}
                }
             {cond
@@ -2145,7 +2149,10 @@
                   {set $dx_in_show_flow FALSE}
                   {set $dx_prep_show_flow FALSE}
                   {set $dx_playing_a_show FALSE}
-                  {overshell end_override_flow kOverrideFlow_SongSettings TRUE}
+                  {overshell remove_sink $this}
+                  {if {overshell in_override_flow kOverrideFlow_SongSettings}
+                     {overshell end_override_flow kOverrideFlow_SongSettings TRUE}
+                  }
                   {ui sync_screen meta_loading_main_screen 0}
                }
             {if_else
